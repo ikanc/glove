@@ -1,18 +1,18 @@
 {
     "name": "Glove",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "manifest_version": 2,
-    "description": "Helping you hide your fingerprint - by Net-Comet PTE LTD",
+    "description": "Protect your fingerprint with a glove - by Net-Comet",
     "homepage_url": "http://net-comet.com/glove",
     "icons": {
-        "16": "icons/icon16.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon128.png"
+        "16": "icons/Glove-16.png",
+        "48": "icons/Glove-48.png",
+        "128": "icons/Glove-128.png"
     },
     "default_locale": "en",
     "browser_action": {
-        "default_icon": "icons/icon19.png",
-        "default_title": "browser action demo",
+        "default_icon": "icons/Glove-128.png",
+        "default_title": "Glove App",
         "default_popup": "src/browser_action/browser_action.html"
     },
     "permissions": [
@@ -20,8 +20,7 @@
         "<all_urls>"
     ],
     "web_accessible_resources": [
-        "js/dostuff.js",
-        "js/pix-test.js"
+        "js/canvasHandler.js"
     ],
     "content_scripts": [
         {
