@@ -4,25 +4,21 @@
  */
 
 (function (){
-    var mycanvas = document.createElement('Canvas');
-    var myctx = mycanvas.getContext("2d");
+    var origToDataURL = HTMLCanvasElement.prototype.toDataURL;
+    HTMLCanvasElement.prototype.toDataURL = function() {
+        var ctx = this.getContext('2d');
 
-    var myfillText = myctx.constructor.prototype.fillText;
-    myctx.constructor.prototype.fillText = function(text, x, y) {
-        myfillText.apply(this, arguments);
-
-        // Get the pixel
-        var imageData = this.getImageData(0, 0, this.canvas.width, this.canvas.height);
-        var rowLen = this.canvas.width * 4;
+        var imageData = ctx.getImageData(0, 0, this.width, this.height);
+        var rowLen = this.width * 4;
         var positionMatrix = [
             [-rowLen - 4,   -rowLen,    -rowLen + 4     ],
             [-4,            0,          4               ],
             [rowLen - 4,    rowLen,     rowLen + 4      ]
         ];
-        var resultData = this.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        var resultData = ctx.getImageData(0, 0, this.width, this.height);
         var pixel = rowLen + 4; // Start at (1,1)
-        var hSlots = this.canvas.height - 1;
-        var wSlots = this.canvas.width - 1;
+        var hSlots = this.height - 1;
+        var wSlots = this.width - 1;
         var edgePixels = [];
         for (var row = 1; row < hSlots; row++) {
             for (var col = 1; col < wSlots; col++){
@@ -43,7 +39,7 @@
                             diffAvg = (rDiff + gDiff + bDiff) / 3;
 
                         if (diffAvg > 30){
-                            edgePixels.push([inspectedPix, pixel]);
+                            edgePixels.push(inspectedPix);
                         }
                     }
                 }
@@ -54,11 +50,14 @@
 
         for (var ind = 0; ind < 9; ind++){
             var randIndex = Math.floor(Math.random() * edgePixels.length);
-            resultData.data[edgePixels[randIndex][0] + 4] = resultData.data[edgePixels[randIndex][0] + 4] > 128 ?
-                resultData.data[edgePixels[randIndex][0] + 4] - 5 :
-                resultData.data[edgePixels[randIndex][0] + 4] + 5;
+            var pixAlphaIndex = edgePixels[randIndex] + 4;
+            resultData.data[pixAlphaIndex] = imageData.data[pixAlphaIndex] > 128 ?
+                imageData.data[pixAlphaIndex] - 5 :
+                imageData.data[pixAlphaIndex] + 5;
         }
 
-        this.putImageData(resultData, 0 , 0);
+        ctx.putImageData(resultData, 0 , 0);
+
+        return origToDataURL.apply(this, arguments);
     };
 })();
